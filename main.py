@@ -1,6 +1,6 @@
 from typing import List
 
-def simplex(objectiveFunction: List[int], constraintCoefficients: List[List[int]], constraintValues: List[int], eps: int = 0.00001) -> tuple:
+def simplex(objectiveFunction: List[float], constraintCoefficients: List[List[float]], constraintValues: List[float], eps: float = 0.00001) -> tuple:
     if len(constraintCoefficients) != len(constraintValues):
         raise ValueError("Constraints mentioned improperly")
 
@@ -31,12 +31,10 @@ def simplex(objectiveFunction: List[int], constraintCoefficients: List[List[int]
             ratios.append(constraints[i][-1] / constraints[i][pivot_column])
         pivot_row = ratios.index(min(filter(lambda x: x >= 0, ratios)))
         
-        
         enter = variables[pivot_column]
         basic_variables[pivot_row] = enter
         pivot = constraints[pivot_row][pivot_column]
         constraints[pivot_row] = list(map(lambda x: x / pivot,constraints[pivot_row]))
-
 
         enter_row = constraints[pivot_row]
         enter_row_index = constraints.index(enter_row)
@@ -52,7 +50,6 @@ def simplex(objectiveFunction: List[int], constraintCoefficients: List[List[int]
         if "s" in basic_variables[i]:
             constraints.pop(i)
     basic_variables = list(filter(lambda x: "s" not in x, basic_variables))
-
     constraints = list(map(lambda x: x[-1], constraints))
 
     x = [0] * (len(objectiveFunction) - 1)
@@ -61,9 +58,21 @@ def simplex(objectiveFunction: List[int], constraintCoefficients: List[List[int]
     for i in range(len(basic_variables)):
         x[int(basic_variables[i]) - 1] = constraints[i]
 
+    x = list(map(lambda x: round(x, len(str(eps)[-1])), x))
+    maximumFunctionValue = round(maximumFunctionValue, len(str(eps)[-1]))
+
     return (x, maximumFunctionValue)
 
-solution = simplex([9,10,16],[[18,15,12],[6,4,8],[5,3,3]],[360,192,180])
-print(solution)
 
+objectiveFunction = list(map(lambda x: float(x), input("Enter coefficients for objective function [\"1 2 3\", for example]:\n").split(" ")))
+constraintCoefficients = []
+constraintValues = []
+n = int(input("Enter number of constraints:\n"))
+for i in range(n):
+    constraintCoefficients.append(list(map(lambda x: float(x), input(f"Enter coefficients for constraint {i + 1} [\"1 2 3\", for example]:\n").split(" "))))
+for i in range(n):
+    constraintValues.append(float(input(f"Enter value for constraint {i + 1}:\n")))
+eps = float(input("Enter accuracy:\n"))
 
+solution = simplex(objectiveFunction, constraintCoefficients, constraintValues, eps)
+print("Answer:", *solution)
