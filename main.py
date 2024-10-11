@@ -66,12 +66,13 @@ def simplex(objectiveFunction: List[float], constraintCoefficients: List[List[fl
 objectiveFunction = list(map(lambda x: float(x), input("Enter coefficients for objective function [\"1 2 3\", for example]:\n").split(" ")))
 constraintCoefficients = []
 constraintValues = []
+
 n = int(input("Enter number of constraints:\n"))
 for i in range(n):
     constraintCoefficients.append(list(map(lambda x: float(x), input(f"Enter coefficients for constraint {i + 1} [\"1 2 3\", for example]:\n").split(" "))))
 for i in range(n):
     constraintValues.append(float(input(f"Enter value for constraint {i + 1}:\n")))
-eps = int(input("Enter accuracy:\n"))
+eps = int(input("Enter accuracy (number of decimal places):\n"))
 
 solution = simplex(objectiveFunction, constraintCoefficients, constraintValues, eps)
 print("Answer:", *solution)
