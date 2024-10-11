@@ -1,9 +1,6 @@
 from typing import List
 
-def simplex(objectiveFunction: List[float], constraintCoefficients: List[List[float]], constraintValues: List[float], eps: float = 0.00001) -> tuple:
-    if len(constraintCoefficients) != len(constraintValues):
-        raise ValueError("Constraints mentioned improperly")
-
+def simplex(objectiveFunction: List[float], constraintCoefficients: List[List[float]], constraintValues: List[float], eps: int) -> tuple:
     constraints = []
     objectiveFunction = list(map(lambda x: -x, objectiveFunction))
     objectiveFunction.append(0)
@@ -29,6 +26,8 @@ def simplex(objectiveFunction: List[float], constraintCoefficients: List[List[fl
                 ratios.append(-1)
                 continue
             ratios.append(constraints[i][-1] / constraints[i][pivot_column])
+        if len(list(filter(lambda x: x >= 0, ratios))) == 0:
+            return ["Method is not applicable"]
         pivot_row = ratios.index(min(filter(lambda x: x >= 0, ratios)))
         
         enter = variables[pivot_column]
@@ -58,8 +57,8 @@ def simplex(objectiveFunction: List[float], constraintCoefficients: List[List[fl
     for i in range(len(basic_variables)):
         x[int(basic_variables[i]) - 1] = constraints[i]
 
-    x = list(map(lambda x: round(x, len(str(eps)[-1])), x))
-    maximumFunctionValue = round(maximumFunctionValue, len(str(eps)[-1]))
+    x = list(map(lambda x: round(x, eps), x))
+    maximumFunctionValue = round(maximumFunctionValue, eps)
 
     return (x, maximumFunctionValue)
 
@@ -72,7 +71,7 @@ for i in range(n):
     constraintCoefficients.append(list(map(lambda x: float(x), input(f"Enter coefficients for constraint {i + 1} [\"1 2 3\", for example]:\n").split(" "))))
 for i in range(n):
     constraintValues.append(float(input(f"Enter value for constraint {i + 1}:\n")))
-eps = float(input("Enter accuracy:\n"))
+eps = int(input("Enter accuracy:\n"))
 
 solution = simplex(objectiveFunction, constraintCoefficients, constraintValues, eps)
 print("Answer:", *solution)
